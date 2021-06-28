@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" lang="en" xml:lang="en">
+    
+    <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                    template="./WEB-INF/Template.xhtml"
+                    xmlns:p="http://primefaces.org/ui"
+                    xmlns:h="http://xmlns.jcp.org/jsf/html"
+                    xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+        <ui:define name="content">
+
+            <br/>
+
+            <h2>Usuários</h2>
+
+            <br/>
+            <h:form id="form">
+                <p:dataTable var="valor" value="#{usuarioController.usuarios}"
+                             id="tabelaTQ" emptyMessage="Nenhum registro encontrado"
+                             paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             paginator="true" rows="10" rowsPerPageTemplate="5,10,25,50,100,9999">
+
+                    <p:column headerText="Código" sortBy="#{valor.idUsuario}" filterBy="#{valor.idUsuario}">
+
+                        <h:outputText value="#{valor.idUsuario}" />
+                    </p:column>
+
+                    <p:column headerText="Nome" sortBy="#{valor.nome}" filterBy="#{valor.nome}">
+
+                        <h:outputText value="#{valor.nome}" />
+                    </p:column>
+                    
+                    <p:column headerText="E-mail" sortBy="#{valor.email}" filterBy="#{valor.email}">
+
+                        <h:outputText value="#{valor.email}" />
+                    </p:column>
+                    
+                    <p:column headerText="Tipo" sortBy="#{valor.tipoUsuarioidTipoUsuario.nomeTipoUsuario}" filterBy="#{valor.tipoUsuarioidTipoUsuario.nomeTipoUsuario}">
+                        <h:outputText value="#{valor.tipoUsuarioidTipoUsuario.nomeTipoUsuario}" />
+                    </p:column>
+                    
+                    
+                    <p:column headerText="Opções" exportable="false">
+                        <center>
+                            <p:commandButton icon="ui-icon-pencil" value="Editar" onclick="PF('record').show();"> 
+                                <f:setPropertyActionListener target="#{usuarioController.usuario}"
+                                                             value="#{valor}" />
+                            </p:commandButton>
+
+                            <p:commandButton icon="ui-icon-trash" value="Deletar" onclick="PF('remove').show();"> 
+                                <f:setPropertyActionListener target="#{usuarioController.usuario}"
+                                                             value="#{valor}" />
+                            </p:commandButton> 
+                        </center>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+            <br/>
+
+            <p:commandButton icon="ui-icon-plus" value="Novo" onclick="PF('record').show();" />  
+
+            <h:form>
+                <div align="center">
+                    <h3>Exportar dados da página</h3>
+
+                    <h:commandLink id="excel">
+                        <p:graphicImage name="imagens/exports/excel.png" />
+                        <p:dataExporter type="xls" target=":form:tabelaTQ" encoding="ISO-8859-1" fileName="export"/>
+                    </h:commandLink>
+
+                    <h:commandLink id="xlsx">
+                        <p:graphicImage name="imagens/exports/excelN.png" width="2%" />
+                        <p:dataExporter type="xlsxstream" target=":form:tabelaTQ" encoding="ISO-8859-1" fileName="export"/>
+                    </h:commandLink>
+
+                    <h:commandLink id="pdf">
+                        <p:graphicImage name="imagens/exports/pdf.png" />
+                        <p:dataExporter type="pdf" target=":form:tabelaTQ" encoding="ISO-8859-1" fileName="export" />
+                    </h:commandLink>
+
+
+                    <h:commandLink>
+                        <p:graphicImage name="imagens/exports/csv.png" width="24"/>
+                        <p:dataExporter type="csv" target=":form:tabelaTQ" encoding="ISO-8859-1" fileName="export" />
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <p:graphicImage  name="imagens/exports/xml.png" width="24"/>
+                        <p:dataExporter type="xml" target=":form:tabelaTQ" encoding="ISO-8859-1" fileName="export" />
+                    </h:commandLink>
+                </div>
+            </h:form>
+
+            <p:dialog header="Novo" widgetVar="record" modal="true">
+                <h:form>
+                    <p:panelGrid id="panelRecord" columns="2">
+                        Tipo de Usuário:
+                        <p:selectOneMenu id="resp" value="#{usuarioController.usuario.tipoUsuarioidTipoUsuario}" converter="tipousuarioConverter">
+                            <f:selectItem itemLabel="Selecione" itemValue="" />
+                            <f:selectItems value="#{tipoUsuarioController.tipoUsuarios}" var="respname" itemLabel="#{respname.nomeTipoUsuario}" itemValue="#{respname}" />
+                        </p:selectOneMenu>
+                        Nome:
+                        <p:inputText value="#{usuarioController.usuario.nome}"/>
+                        E-mail:
+                        <p:inputText value="#{usuarioController.usuario.email}"/>
+                        Senha:
+                        <p:password value="#{usuarioController.usuario.senha}"/>
+                    </p:panelGrid>
+
+                    <br/>
+                    <p:commandButton value="Salvar"  
+                                     actionListener="#{usuarioController.gravar}" onclick="record.hide()" alt="Record"/> 
+                </h:form>
+            </p:dialog>
+
+
+            <p:dialog header="Delete" widgetVar="remove" modal="true"> 
+                <h:form>
+                    Deseja mesmo remover?
+                    <p:commandButton value="Deletar"  
+                                     actionListener="#{usuarioController.remover}" onclick="remove.hide()" alt="Delete" /> 
+                </h:form>
+            </p:dialog>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
